@@ -1,24 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
+    <PackageId>GenericLoggingHelper</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Mario Escalante</Authors>
+    <Company>Eskantu</Company>
+    <Description>Generic helper for interface-based logging proxies and centralized exception handling.</Description>
+    <PackageTags>logging;proxy;dynamic-proxy;dependency-injection;exception-handling;dotnet</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/Eskantu/GenericLoggingHelper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Eskantu/GenericLoggingHelper</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>Initial public release with dynamic proxy interception for interface services and configurable exception logging callbacks.</PackageReleaseNotes>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedAllSources>true</EmbedAllSources>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="5.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
-  
-<PropertyGroup>
-  <TargetFramework>net8.0</TargetFramework>
-  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  <PackageId>GenericLoggingHelper</PackageId>
-  <Version>1.0.0</Version>
-  <Authors>Mario Escalante</Authors>
-  <Company>Eskantu</Company>
-  <Description>Helper genérico para logging de interfaces con soporte de delegados.</Description>
-  <!-- <PackageOutputPath>..\..\nuget</PackageOutputPath> -->
-</PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" Link="README.md" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" Link="LICENSE" />
+  </ItemGroup>
 
 </Project>
