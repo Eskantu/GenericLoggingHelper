@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="5.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+  </ItemGroup>
+  
+<PropertyGroup>
+  <TargetFramework>net8.0</TargetFramework>
+  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  <PackageId>GenericLoggingHelper</PackageId>
+  <Version>1.0.0</Version>
+  <Authors>Mario Escalante</Authors>
+  <Company>Eskantu</Company>
+  <Description>Helper genérico para logging de interfaces con soporte de delegados.</Description>
+  <!-- <PackageOutputPath>..\..\nuget</PackageOutputPath> -->
+</PropertyGroup>
+
+</Project>
