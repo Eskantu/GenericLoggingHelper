@@ -8,14 +8,6 @@ using Eskantu.Logging;
 using System.Reflection;
 namespace GenericLoggingHelper.Test
 {
-    public interface ITestService
-    {
-        void DoWork();
-        void FailWork();
-        void FailWithArgs(string orderId, int retries);
-        Task FailWorkAsync();
-    }
-
     public class TestService : ITestService
     {
         public void DoWork()
