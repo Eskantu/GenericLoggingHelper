@@ -1,8 +1,5 @@
 ﻿using Castle.DynamicProxy;
 
-using Microsoft.Extensions.Logging;
-using System.Reflection;
-
 namespace GenericLoggingHelper
 {
     public class GenericLoggingProxyFactory<T> : IGenericLoggingProxy<T> where T : class
@@ -41,7 +38,7 @@ namespace GenericLoggingHelper
                 }
                 catch (Exception ex)
                 {
-                    _options.OnException(ex, invocation.Method, invocation.Arguments);
+                    _options.OnException(ex, invocation.Method, invocation.Arguments.Cast<object?>().ToArray());
                     throw;
                 }
             }

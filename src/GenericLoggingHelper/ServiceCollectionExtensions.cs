@@ -2,24 +2,15 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Win32;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eskantu.Logging
 {
     public static class ServiceCollectionExtensions
     {
-        private static LoggingOptions _globalOptions = new();
-
         /// <summary>
         /// Configura el logging global para todos los proxies.
         /// </summary>
-        public static IServiceCollection AddGenericLoggingProxy(this IServiceCollection services, Action<LoggingOptions> configure = null)
+        public static IServiceCollection AddGenericLoggingProxy(this IServiceCollection services, Action<LoggingOptions>? configure = null)
         {
             services.AddSingleton(sp =>
             {
@@ -54,7 +45,7 @@ namespace Eskantu.Logging
         /// Registro de servicios con logging opcional
     public static IServiceCollection AddWithLogging<TInterface, TImplementation>(
         this IServiceCollection services,
-        Action<LoggingOptions> configureOverride = null)
+        Action<LoggingOptions>? configureOverride = null)
         where TInterface : class
         where TImplementation : class, TInterface
         {

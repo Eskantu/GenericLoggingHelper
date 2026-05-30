@@ -1,19 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenericLoggingHelper
 {
     public class LoggingOptions
     {
-        public Action<Exception, MethodInfo, object[]> OnException { get; set; }
+        public Action<Exception, MethodInfo, object?[]> OnException { get; set; }
 
-        public ILogger Logger { get; set; }
+        public ILogger? Logger { get; set; }
 
         public LoggingOptions()
         {
