@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Readme"
+    url: "https://github.com/Eskantu/GenericLoggingHelper#readme"
+    about: "Revisa primero la documentacion y ejemplos de uso"
+  - name: "NuGet package"
+    url: "https://www.nuget.org/packages/GenericLoggingHelper"
+    about: "Consulta la pagina del paquete y su metadata publica"
