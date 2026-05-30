@@ -134,7 +134,7 @@ jobs:
           fi
 
       - name: Upload artifacts to workflow run
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: nuget-release-${{ env.VERSION }}
           path: |
