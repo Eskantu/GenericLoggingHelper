@@ -1,29 +1,29 @@
 ---
 name: "Question / support"
-about: "Haz una pregunta tecnica sobre uso o integracion"
+about: "Ask a technical question about usage or integration"
 title: "[QUESTION] "
 labels: ["question", "triage"]
 assignees: []
 ---
 
-## Pregunta
-Describe claramente tu duda.
+## Question
+Describe your question clearly.
 
-## Que intentaste
-Explica los pasos que ya probaste.
+## What you tried
+Explain the steps you already tried.
 
-## Codigo o configuracion relevante
+## Relevant code or configuration
 ```csharp
-// Comparte un ejemplo corto de configuracion o uso
+// Share a short usage or configuration sample
 ```
 
-## Entorno
+## Environment
 - OS:
 - .NET SDK:
-- Version de GenericLoggingHelper:
+- GenericLoggingHelper version:
 
-## Resultado actual
-Describe el resultado que observas.
+## Current result
+Describe the result you are observing.
 
-## Resultado esperado
-Describe el resultado que esperabas.
+## Expected result
+Describe the result you expected.

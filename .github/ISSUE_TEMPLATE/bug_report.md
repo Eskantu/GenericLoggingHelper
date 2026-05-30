@@ -1,41 +1,41 @@
 ---
 name: "Bug report"
-about: "Reporta un error para ayudarnos a mejorar GenericLoggingHelper"
+about: "Report a bug to help us improve GenericLoggingHelper"
 title: "[BUG] "
 labels: ["bug", "triage"]
 assignees: []
 ---
 
-## Descripcion del problema
-Describe de forma clara y breve que esta fallando.
+## Problem description
+Describe clearly and briefly what is failing.
 
-## Comportamiento esperado
-Explica que esperabas que pasara.
+## Expected behavior
+Explain what you expected to happen.
 
-## Comportamiento actual
-Explica que esta pasando realmente.
+## Actual behavior
+Explain what is actually happening.
 
-## Pasos para reproducir
+## Steps to reproduce
 1. 
 2. 
 3. 
 4. 
 
-## Codigo de ejemplo minimo
+## Minimal reproducible code
 ```csharp
-// Agrega aqui un ejemplo minimo reproducible
+// Add a minimal reproducible sample here
 ```
 
-## Logs y excepcion
+## Logs and exception
 ```text
-Pega aqui el stack trace o logs relevantes
+Paste the stack trace or relevant logs here
 ```
 
-## Entorno
-- OS: (ej. Windows 11, Ubuntu 24.04)
-- .NET SDK: (ej. 8.0.302)
-- Version de GenericLoggingHelper: (ej. 1.0.0)
-- Tipo de app: (API, Worker, Console, etc.)
+## Environment
+- OS: (e.g. Windows 11, Ubuntu 24.04)
+- .NET SDK: (e.g. 8.0.302)
+- GenericLoggingHelper version: (e.g. 1.0.0)
+- App type: (API, Worker, Console, etc.)
 
-## Informacion adicional
-Agrega cualquier otro contexto, capturas o detalles tecnicos.
+## Additional information
+Add any other context, screenshots, or technical details.

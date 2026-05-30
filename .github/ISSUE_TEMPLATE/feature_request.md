@@ -1,27 +1,27 @@
 ---
 name: "Feature request"
-about: "Propone una mejora o nueva funcionalidad"
+about: "Suggest an improvement or new feature"
 title: "[FEATURE] "
 labels: ["enhancement", "triage"]
 assignees: []
 ---
 
-## Problema que quieres resolver
-Describe el dolor actual o limitacion que observas.
+## Problem to solve
+Describe the current pain point or limitation.
 
-## Solucion propuesta
-Describe la funcionalidad que te gustaria ver.
+## Proposed solution
+Describe the feature you would like to see.
 
-## Alternativas consideradas
-Describe otras alternativas o workarounds que evaluaste.
+## Alternatives considered
+Describe other options or workarounds you evaluated.
 
-## Impacto esperado
-Explica como ayudaria esta mejora a otros usuarios.
+## Expected impact
+Explain how this improvement helps other users.
 
-## API o experiencia sugerida (opcional)
+## Suggested API or experience (optional)
 ```csharp
-// Ejemplo de uso propuesto
+// Proposed usage example
 ```
 
-## Informacion adicional
-Incluye contexto, referencias, issues relacionados o PRs.
+## Additional information
+Include context, references, related issues, or PRs.
