@@ -1,66 +1,57 @@
 name: CD - Publish NuGet
 
 on:
-  workflow_run:
-    workflows: [ "CI - Pack Artifacts" ]
-    types: [ completed ]
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (SemVer, e.g. 1.0.1)"
+        required: true
+        type: string
+      publish_to_nuget:
+        description: "Publish packages to NuGet.org"
+        required: true
+        default: true
+        type: boolean
 
 permissions:
-  contents: read
-  actions: read
+  contents: write
 
 jobs:
-  publish-from-artifact:
-    if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.event == 'push' }}
-    runs-on: ubuntu-latest
-    environment: nuget
-
-    steps:
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-
-      - name: Download package artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: nuget-packages
-          path: ./artifacts
-          run-id: ${{ github.event.workflow_run.id }}
-          repository: ${{ github.repository }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish .nupkg to NuGet
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: |
-          set -euo pipefail
-          for pkg in ./artifacts/*.nupkg; do
-            if [ -f "$pkg" ]; then
-              dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
-            fi
-          done
-
-      - name: Publish .snupkg symbols to NuGet
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: |
-          set -euo pipefail
-          for sym in ./artifacts/*.snupkg; do
-            if [ -f "$sym" ]; then
-              dotnet nuget push "$sym" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
-            fi
-          done
-
-  publish-manual:
+  publish:
     if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     environment: nuget
+    env:
+      VERSION: ${{ inputs.version }}
+      TAG_NAME: v${{ inputs.version }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate version format
+        run: |
+          set -euo pipefail
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z\.-]+)?$ ]]; then
+            echo "Version '$VERSION' is not valid SemVer. Example: 1.2.3 or 1.2.3-rc.1"
+            exit 1
+          fi
+
+      - name: Ensure tag does not already exist
+        run: |
+          set -euo pipefail
+          git fetch --tags
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag '$TAG_NAME' already exists. Use a new version."
+            exit 1
+          fi
+
+      - name: Set package version in csproj
+        run: |
+          set -euo pipefail
+          sed -i "s#<Version>.*</Version>#<Version>${VERSION}</Version>#" ./src/GenericLoggingHelper/GenericLoggingHelper.csproj
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -70,10 +61,37 @@ jobs:
       - name: Restore
         run: dotnet restore ./src/GenericLoggingHelper.sln
 
+      - name: Build (Release)
+        run: dotnet build ./src/GenericLoggingHelper.sln --configuration Release --no-restore
+
+      - name: Test (Release)
+        run: dotnet test ./src/GenericLoggingHelper.sln --configuration Release --no-build --verbosity normal
+
       - name: Pack (Release)
-        run: dotnet pack ./src/GenericLoggingHelper/GenericLoggingHelper.csproj --configuration Release --no-restore --output ./artifacts
+        run: dotnet pack ./src/GenericLoggingHelper/GenericLoggingHelper.csproj --configuration Release --no-build --output ./artifacts
+
+      - name: Generate SHA256 checksums
+        run: |
+          set -euo pipefail
+          (cd artifacts && sha256sum *.nupkg *.snupkg > SHA256SUMS.txt)
+
+      - name: Commit version bump for release
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ./src/GenericLoggingHelper/GenericLoggingHelper.csproj
+          git commit -m "chore(release): prepare ${VERSION}" || echo "No changes to commit"
+          git push origin HEAD:main
+
+      - name: Create and push tag
+        run: |
+          set -euo pipefail
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+          git push origin "$TAG_NAME"
 
       - name: Publish .nupkg to NuGet
+        if: ${{ inputs.publish_to_nuget }}
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
@@ -85,6 +103,7 @@ jobs:
           done
 
       - name: Publish .snupkg symbols to NuGet
+        if: ${{ inputs.publish_to_nuget }}
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
@@ -94,3 +113,45 @@ jobs:
               dotnet nuget push "$sym" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
             fi
           done
+
+      - name: Build release notes from CHANGELOG
+        id: release_notes
+        run: |
+          set -euo pipefail
+          if [ -f CHANGELOG.md ]; then
+            {
+              echo "release_notes<<EOF"
+              awk '/^## \[/{ if (found) exit; found=1 } found { print }' CHANGELOG.md
+              echo ""
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            {
+              echo "release_notes<<EOF"
+              echo "Release $TAG_NAME"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload artifacts to workflow run
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-release-${{ env.VERSION }}
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
+            artifacts/SHA256SUMS.txt
+            CHANGELOG.md
+          if-no-files-found: error
+
+      - name: Create GitHub release with assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: Release ${{ env.TAG_NAME }}
+          body: ${{ steps.release_notes.outputs.release_notes }}
+          files: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
+            artifacts/SHA256SUMS.txt
+            CHANGELOG.md
