@@ -1,0 +1,41 @@
+name: CI - Pack Artifacts
+
+on:
+  workflow_run:
+    workflows: [ "CI - Build and Test" ]
+    types: [ completed ]
+
+permissions:
+  contents: read
+
+jobs:
+  pack:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'pull_request') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout triggering commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore ./src/GenericLoggingHelper.sln
+
+      - name: Pack (Release)
+        run: dotnet pack ./src/GenericLoggingHelper/GenericLoggingHelper.csproj --configuration Release --no-restore --output ./artifacts
+
+      - name: Upload NuGet artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
+          if-no-files-found: error
+          retention-days: 14
